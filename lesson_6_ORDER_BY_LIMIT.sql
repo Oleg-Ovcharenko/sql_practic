@@ -48,5 +48,5 @@ SELECT salers.sname, customers.cname, salers.city
         WHERE salers.snum = customers.snum
             ORDER BY salers.sname;
 
--- Присвоение псевдонимов таблицам
+-- 15 Присвоение псевдонимов таблицам
 SELECT s.sname, c.cname, s.city FROM salers s, customers c WHERE s.snum = c.snum ORDER BY s.sname;
