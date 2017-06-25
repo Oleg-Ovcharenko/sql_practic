@@ -161,8 +161,21 @@ SELECT SEC_TO_TIME(60);
 -- 23. TIME_TO_SEC(time)
 -- Возвращает аргумент time, преобразованный в секунды
 
+SELECT TIME_TO_SEC('1:00:00');
+SELECT TIME_TO_SEC('60:00');
+
 -- 24. DATE(expr)
 -- Возвращает часть, отвечающую за дату
 
+SELECT NOW(), DATE(NOW());
+
 -- 25. TIME(expr)
 -- Возвращает часть, отвечающую за время
+
+SELECT NOW(), TIME(NOW());
+
+-- 26. DATEDIFF(expr1, expr2)
+-- Возвращает разницу дат.
+
+-- 27. TO_DAYS()
+-- Количество дней от заданой даты 
