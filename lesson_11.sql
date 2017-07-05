@@ -1,33 +1,46 @@
--- 1 Получите идентификатор клиента, имя клиента, сумму и дату совершения им покупки
+-- Выборка из таблицы продавцов только в случае
+-- если есть клиенты с рейтингом больше 100
 
-SELECT c.cnum, c.cname, o.amt, o.odate FROM customers c, orders o WHERE c.cnum = o.cnum;
-
--- 2 Выберите идентификаторы и имена продавцов, имеющих только по 1 клиенту
-
-SELECT snum, sname FROM salers WHERE snum IN (
-    SELECT snum FROM customers GROUP BY snum HAVING COUNT(snum) = 1
+-- TRUE
+SELECT * FROM salers WHERE EXISTS (
+    SELECT * FROM customers WHERE rating > 100
 );
 
--- 3 Получите идентификатор и имя продавца, совершившего максимальную продажу
-
-SELECT snum, sname FROM salers WHERE snum = (
-    SELECT snum FROM orders WHERE amt = (
-        SELECT MAX(amt) FROM orders
-    )
-); 
-
--- 4 Получите идентификатор и имя продавца, совершившего наименьшую продажу
-
-SELECT snum, sname FROM salers WHERE snum IN (
-    SELECT snum FROM orders WHERE amt IN (
-        (SELECT MIN(amt) FROM orders),  
-        (SELECT MAX(amt) FROM orders)
-    )
-); 
-
--- 5 Получите идентификаторы и имена продавцов, совершивших наименьшую и наибольшую продажи
-
-SELECT snum, sname FROM salers WHERE snum = (
-    SELECT snum FROM 
+-- FALSE
+SELECT * FROM salers WHERE EXISTS (
+    SELECT * FROM customers WHERE rating < 100
 );
 
+-- Выборка продавцов из Сан-Хосе только в том случае, если есть клиенты
+-- с рейтингом больше 100
+
+SELECT * FROM salers WHERE city = 'San Jose' AND EXISTS (
+    SELECT cnum FROM customers WHERE rating > 100
+);
+
+-- EXISTS с соотнесенным подзапросом... получить продавцов с их клиентом 
+-- у которых есть клиенты
+
+SELECT * FROM salers s WHERE EXISTS (
+    SELECT * FROM customers c WHERE s.snum = c.snum
+);
+
+-- EXISTS получить продавцов без клиентов
+SELECT * FROM salers s WHERE NOT EXISTS (
+    SELECT * FROM customers c WHERE s.snum = c.snum
+);
+
+-- UNION выборка продавцов и клиентов
+SELECT snum, sname FROM salers
+UNION
+SELECT cnum, cname FROM customers;
+
+-- количество полей в запросах должно совпадать... ERROR!
+SELECT snum, sname, city FROM salers
+UNION
+SELECT cnum, cname FROM customers;
+
+-- дубликаты значений опускаются
+SELECT snum, city FROM salers
+UNION
+SELECT snum, city FROM customers;
